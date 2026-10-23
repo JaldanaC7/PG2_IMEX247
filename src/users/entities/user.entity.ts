@@ -1,4 +1,17 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Cliente } from '../../clientes/entities/cliente.entity';
+
+export enum RolUsuario {
+  ADMIN = 'ADMIN',
+  OPERADOR = 'OPERADOR',
+  CLIENTE = 'CLIENTE',
+}
 
 @Entity('usuarios')
 export class User {
@@ -8,6 +21,19 @@ export class User {
   @Column({ unique: true })
   usuario: string;
 
-  @Column()
+  @Column({ select: false })
   contrasenia: string;
+
+  @Column({
+    type: 'enum',
+    enum: RolUsuario,
+    default: RolUsuario.OPERADOR,
+  })
+  rol: RolUsuario;
+
+  @OneToOne(() => Cliente, {
+    nullable: true,
+  })
+  @JoinColumn()
+  cliente: Cliente | null;
 }
